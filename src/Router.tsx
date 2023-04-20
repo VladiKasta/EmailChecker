@@ -1,7 +1,7 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import App from "./AppAuth";
-import Profile from "./assets/components/Profile";
+import App from "./assets/components/Auth/AppAuth";
+import Profile from "./assets/components/Profile/Profile";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const Router: FC = () => {

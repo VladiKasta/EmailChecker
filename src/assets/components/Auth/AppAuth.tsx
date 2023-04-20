@@ -1,8 +1,8 @@
 import { useGoogleLogin } from "@react-oauth/google";
-import "./App.css";
-import { FC, createContext, useContext, useState } from "react";
+import Button from "react-bootstrap/Button";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "./assets/contexts/Context";
+import styles from "./auth.module.css";
 
 const App: FC = () => {
   interface authData {
@@ -26,9 +26,10 @@ const App: FC = () => {
   });
 
   return (
-    <div className="App">
-      Привет
-      <button onClick={() => login()}>Sign in with Google 🚀</button>
+    <div className={styles.App}>
+      <Button size="lg" onClick={() => login()}>
+        Sign in with Google 🚀
+      </Button>
     </div>
   );
 };

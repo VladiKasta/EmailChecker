@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./AppAuth";
-import "./index.css";
+import "./global.css";
 import Router from "./Router";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

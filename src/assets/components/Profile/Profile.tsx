@@ -6,9 +6,8 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { Link, useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { getMessageById } from "../../functions/getMessageById";
-import MessagePage from "../Message/MessagePage";
 import { ListGroupItem } from "react-bootstrap";
+import { ColorRing } from "react-loader-spinner";
 
 interface Iinfo {
   emailAddress: string;
@@ -28,6 +27,7 @@ const Profile: FC = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState<string | undefined>();
   const [IdMessages, setIdMessages] = useState<MyMessages | undefined>();
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   const login = useGoogleLogin({
     onSuccess: (data) => {
@@ -72,6 +72,7 @@ const Profile: FC = () => {
           variant="primary"
           size="lg"
           onClick={() => {
+            setShowLoader(true);
             getLastMessages(setIdMessages);
           }}
         >
@@ -86,7 +87,15 @@ const Profile: FC = () => {
             ))}
           </ListGroup>
         ) : (
-          ""
+          <ColorRing
+            visible={showLoader}
+            height="80"
+            width="80"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{ display: "block", margin: "0 auto" }}
+            wrapperClass="blocks-wrapper"
+            colors={["#0d6efd", "#0d6efd", "#0d6efd", "#0d6efd", "#0d6efd"]}
+          />
         )}
       </div>
     </>

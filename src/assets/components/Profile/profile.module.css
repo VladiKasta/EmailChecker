@@ -1,12 +1,18 @@
-.my-component {
+.myComponent {
   margin-top: 100px;
 }
 
-.list-group {
+.listGroup {
   width: 500px;
   margin: 0 auto;
   margin-top: 20px;
 }
-.list-group a {
+
+.listGroupItem {
   text-decoration: none;
+  background-color: rgb(107, 103, 97);
+  font-size: 25px;
+
+  padding-top: 10px;
+  text-align: left;
 }

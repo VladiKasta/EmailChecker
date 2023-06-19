@@ -20,23 +20,10 @@ const App: FC = () => {
     onError: (err) => console.log(err),
   });
 
-  /* function handleLogin(data: authData) {
-    console.log(data);
-    localStorage.setItem("auth", data.access_token);
-    console.log("token set");
-
-    return navigate("/profile");
-  }
-  const login = useGoogleLogin({
-    onSuccess: (data) => {
-      data ? handleLogin(data) : "";
-    },
-    onError: (err) => console.log(err),
-  }); */
   return (
     <div className={styles.App}>
       <Button size="lg" onClick={() => login()}>
-        Sign in with Google 🚀
+        Зайти в Google 🚀
       </Button>
     </div>
   );

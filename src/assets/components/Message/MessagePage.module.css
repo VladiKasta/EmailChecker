@@ -24,3 +24,12 @@
   text-align: left;
   margin-right: 10px;
 }
+
+.descript {
+  font-size: large;
+  text-align: left;
+}
+
+.warning {
+  color: red;
+}

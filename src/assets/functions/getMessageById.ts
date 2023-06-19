@@ -1,7 +1,6 @@
 import axios, { AxiosStatic } from "axios";
 import { base64Decoder } from "./Base64Decoder";
 import { checkMsgOnLinks } from "./checkMsgOnLinks";
-import { useGoogleLogin } from "@react-oauth/google";
 import { getAttachments } from "./getAttachment";
 
 export interface iOneMessage {
@@ -15,9 +14,9 @@ export interface iOneMessage {
         };
       };
       [1]: {
-        body?: {
-          data?: string;
-          attachmentId?: string;
+        body: {
+          data: string;
+          attachmentId: string;
         };
       };
     };
@@ -33,11 +32,12 @@ interface IMsgContent {
 }
 
 export interface ImsgData {
-  markUp: string;
+  markUp?: string;
   links?: RegExpMatchArray | null;
+  snippet?: string;
 }
 
-export async function getMessageById(id: string) {
+export async function getMessageById(id: string | undefined) {
   const message = await axios.get<iOneMessage>(
     `https://gmail.googleapis.com/gmail/v1/users/me/messages/${id}`,
     {
@@ -48,8 +48,15 @@ export async function getMessageById(id: string) {
   );
   /* .catch(() => login()); */
   /* console.log(base64Decoder(message.data.payload.parts[0].body.data)); */
+  /* console.log(message.data.snippet); */
 
-  getAttachments(message);
+  if (
+    message.data.payload.parts != undefined &&
+    message.data.payload.parts[1].body?.attachmentId != undefined &&
+    message.data.payload.parts[1].body?.attachmentId != null
+  ) {
+    getAttachments(message);
+  }
 
   function findStringInObjectTree(obj: any, str: string): IMsgContent | null {
     for (let key in obj) {
@@ -75,17 +82,21 @@ export async function getMessageById(id: string) {
     message.data,
     "text/html"
   );
+
+  const snippet = message.data.snippet;
+
   const markUp: string = base64Decoder(msgHtml!.body.data);
-  if (msgContent?.body.data) {
+  console.log(base64Decoder(msgContent!.body.data));
+  if (msgContent?.body.data != undefined && msgContent?.body.data != null) {
     const links: RegExpMatchArray | null = checkMsgOnLinks(
       base64Decoder(msgContent!.body.data)
     );
-    /* console.log(links); */
-    return { markUp, links };
+    console.log(links);
+    return { markUp, links, snippet };
   }
 
   if (msgContent == null) {
-    return { markUp };
+    return { markUp, snippet };
   }
 
   /* if (links) {

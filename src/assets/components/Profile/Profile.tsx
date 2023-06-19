@@ -8,6 +8,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { ListGroupItem } from "react-bootstrap";
 import { ColorRing } from "react-loader-spinner";
+import { AxiosResponse } from "axios";
 
 interface Iinfo {
   emailAddress: string;
@@ -16,9 +17,9 @@ interface Iinfo {
 }
 
 export interface MyMessages {
-  messages: [
+  messages?: [
     {
-      id: string;
+      id?: string;
     }
   ];
 }
@@ -26,8 +27,8 @@ export interface MyMessages {
 const Profile: FC = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState<string | undefined>();
-  const [IdMessages, setIdMessages] = useState<MyMessages | undefined>();
   const [showLoader, setShowLoader] = useState<boolean>(false);
+  const [descriptions, setDescriptions] = useState<Array<AxiosResponse>>();
 
   const login = useGoogleLogin({
     onSuccess: (data) => {
@@ -61,10 +62,27 @@ const Profile: FC = () => {
       .catch(() => login());
   }, [userInfo]);
 
+  async function getDescriptions(ids: any) {
+    let descArr = [];
+    for (let index = 0; index < ids.length; index++) {
+      const idExactMessage = ids[index].id;
+      let message = await axios.get(
+        `https://gmail.googleapis.com/gmail/v1/users/me/messages/${idExactMessage}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        }
+      );
+      descArr.push(message);
+    }
+    setDescriptions(descArr);
+  }
+
   return (
     <>
-      <div className={styles["my-component"]}>
-        <h1>Hi, {userInfo}!</h1>
+      <div className={styles.myComponent}>
+        <h1 style={{ fontSize: "50px" }}>Привет, {userInfo}!</h1>
         <div className="imgWrapper">
           <img src="/img/profile.jpg" alt="" />
         </div>
@@ -73,16 +91,26 @@ const Profile: FC = () => {
           size="lg"
           onClick={() => {
             setShowLoader(true);
-            getLastMessages(setIdMessages);
+            getLastMessages()
+              .then((data) => {
+                getDescriptions(data.data.messages);
+              })
+              .catch((e) => console.log(e));
+            /* getDescriptions(getLastMessages()); */
+            console.log(descriptions);
           }}
         >
           Получить последние сообщения
         </Button>{" "}
-        {IdMessages ? (
-          <ListGroup className={styles["list-group"]}>
-            {IdMessages.messages.map((message) => (
-              <Link to={`/profile/${message.id}`} key={`${message.id}`}>
-                <ListGroupItem key={message.id}>{message.id}</ListGroupItem>
+        {descriptions ? (
+          <ListGroup>
+            {descriptions.map((message) => (
+              <Link
+                to={`/profile/${message.data.id}`}
+                key={`${message.data.id}`}
+                className={styles.listGroupItem}
+              >
+                <ListGroupItem>{message.data.snippet}</ListGroupItem>
               </Link>
             ))}
           </ListGroup>
